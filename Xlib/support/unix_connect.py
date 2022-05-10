@@ -23,6 +23,7 @@ import re
 import os
 import platform
 import socket
+import tempfile
 
 # FCNTL is deprecated from Python 2.2, so only import it if we doesn't
 # get the names we need.  Furthermore, FD_CLOEXEC seems to be missing
@@ -95,6 +96,7 @@ def _get_tcp_socket(host, dno):
 
 def _get_unix_socket(address):
     s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    print(s)
     s.connect(address)
     return s
 
@@ -111,7 +113,7 @@ def get_socket(dname, protocol, host, dno):
 
         # Unix socket.
         else:
-            address = '/tmp/.X11-unix/X%d' % dno
+            address = os.path.abspath(tempfile.gettempdir()) + '/.X11-unix/X%d' % dno
             if not os.path.exists(address):
                 # Use abstract address.
                 address = '\0' + address
